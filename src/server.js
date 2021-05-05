@@ -78,6 +78,7 @@ function start(opts) {
   paths.fonts = path.resolve(paths.root, paths.fonts || '');
   paths.sprites = path.resolve(paths.root, paths.sprites || '');
   paths.mbtiles = path.resolve(paths.root, paths.mbtiles || '');
+  paths.icons = path.resolve(paths.root, paths.icons || '');
 
   const startupPromises = [];
 
@@ -91,6 +92,7 @@ function start(opts) {
   checkPath('fonts');
   checkPath('sprites');
   checkPath('mbtiles');
+  checkPath('icons');
 
   if (options.dataDecorator) {
     try {
