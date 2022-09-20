@@ -16,12 +16,13 @@ import mlgl from '@acalcutt/maplibre-gl-native';
 import MBTiles from '@mapbox/mbtiles';
 import proj4 from 'proj4';
 import request from 'request';
+import sanitize from "sanitize-filename";
 import {getFontsPbf, getTileUrls, fixTileJSONCenter} from './utils.js';
 
 const FLOAT_PATTERN = '[+-]?(?:\\d+|\\d+\.?\\d+)';
 const httpTester = /^(http(s)?:)?\/\//;
 
-const {createCanvas} = pkg;
+const {createCanvas, Image} = pkg;
 const mercator = new SphericalMercator();
 const getScale = (scale) => (scale || '@1x').slice(1, 2) | 0;
 
@@ -230,6 +231,11 @@ const extractMarkersFromQuery = (query, options, transformer) => {
     // Check if icon is served via http otherwise marker icons are expected to
     // be provided as filepaths relative to configured icon path
     if (!(iconURI.startsWith('http://') || iconURI.startsWith('https://'))) {
+      // Make sure the user requested marker name is not malicious
+      iconURI = sanitize(iconURI)
+      if (!(iconURI.endsWith('.svg') || iconURI.endsWith('.png') || iconURI.endsWith('.jpg'))) {
+        continue
+      }
       iconURI = path.resolve(options.paths.icons, iconURI);
       // Ensure icon exists at provided path
       if (!fs.existsSync(iconURI)) {
